@@ -3,6 +3,7 @@ import json
 import requests
 
 from django.contrib.auth import login, authenticate
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from .utils import get_config
@@ -41,7 +42,10 @@ def process_login(request):
     user = authenticate(**user_info)
 
     if user:
-        login(request, user)
+        if config['AUTH0_EMAIL_CONFIRMATION_REQUIRED'] and not user_info['email_verified']:
+            messages.error(request, 'Email is not validated')
+        else:
+            login(request, user)
         return redirect(config['AUTH0_SUCCESS_URL'])
 
     return HttpResponse(status=400)

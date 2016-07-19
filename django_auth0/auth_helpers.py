@@ -33,14 +33,14 @@ def process_login(request):
     url = 'https://%s/userinfo?access_token=%s'
     user_url = url % (config['AUTH0_DOMAIN'],
                       token_info.get('access_token', ''))
-	try:
-    	user_info = requests.get(user_url).json()
+    try:
+        user_info = requests.get(user_url).json()
     except ValueError:
-    	# let crash with KeyError if error & error_description aren't set in get params
-    	error = request.GET['error']
-    	error_description = request.GET['error_description']
-    	messages.error(request, error_description)
-    	return redirect(config['AUTH0_SUCCESS_URL'])
+        # let crash with KeyError if error & error_description aren't set in get params
+        error = request.GET['error']
+        error_description = request.GET['error_description']
+        messages.error(request, error_description)
+        return redirect(config['AUTH0_SUCCESS_URL'])
 
     # We're saving all user information into the session
     request.session['profile'] = user_info

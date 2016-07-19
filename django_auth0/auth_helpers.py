@@ -3,6 +3,7 @@ import json
 import requests
 
 from django.contrib.auth import login, authenticate
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from .utils import get_config

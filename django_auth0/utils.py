@@ -10,5 +10,4 @@ def get_config():
         'AUTH0_DOMAIN': settings.AUTH0_DOMAIN,
         'AUTH0_CALLBACK_URL': settings.AUTH0_CALLBACK_URL,
         'AUTH0_SUCCESS_URL': settings.AUTH0_SUCCESS_URL,
-        'AUTH0_EMAIL_CONFIRMATION_REQUIRED': getattr(settings, "AUTH0_EMAIL_CONFIRMATION_REQUIRED", False),
     }

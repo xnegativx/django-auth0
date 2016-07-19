@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
+djna# -*- coding: utf-8 -*-
 import json
 import requests
 
 from django.contrib.auth import login, authenticate
-from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from .utils import get_config
@@ -34,18 +33,21 @@ def process_login(request):
     url = 'https://%s/userinfo?access_token=%s'
     user_url = url % (config['AUTH0_DOMAIN'],
                       token_info.get('access_token', ''))
-
-    user_info = requests.get(user_url).json()
+	try:
+    	user_info = requests.get(user_url).json()
+    except ValueError:
+    	# let crash with KeyError if error & error_description aren't set in get params
+    	error = request.GET['error']
+    	error_description = request.GET['error_description']
+    	messages.error(request, error_description)
+    	return redirect(config['AUTH0_SUCCESS_URL'])
 
     # We're saving all user information into the session
     request.session['profile'] = user_info
     user = authenticate(**user_info)
 
     if user:
-        if config['AUTH0_EMAIL_CONFIRMATION_REQUIRED'] and not user_info['email_verified']:
-            messages.error(request, 'Email is not validated')
-        else:
-            login(request, user)
+        login(request, user)
         return redirect(config['AUTH0_SUCCESS_URL'])
 
     return HttpResponse(status=400)
